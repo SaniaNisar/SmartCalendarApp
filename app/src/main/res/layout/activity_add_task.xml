@@ -1,10 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddTaskActivity">
+    android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edit_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Task Title"
+            android:textColor="?android:textColorPrimary"
+            android:inputType="textCapSentences"
+            android:padding="12dp"
+            android:background="@drawable/edittext_background" />
+
+        <EditText
+            android:id="@+id/edit_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Task Description"
+            android:inputType="textMultiLine"
+            android:textColor="?android:textColorPrimary"
+            android:minLines="3"
+            android:gravity="top"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/edittext_background" />
+
+        <Button
+            android:id="@+id/btn_pick_datetime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pick Date and Time"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/text_date_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No date selected"
+            android:textColor="?android:textColorPrimary"
+            android:layout_marginTop="8dp"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Task"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/purple_500"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+</ScrollView>

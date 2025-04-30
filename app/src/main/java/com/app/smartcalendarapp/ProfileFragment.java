@@ -1,64 +1,91 @@
 package com.app.smartcalendarapp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.Toast;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.fragment.app.Fragment;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ProfileFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    EditText editName, editEmail;
+    Switch switchTheme;
+    Button btnSave;
+    SharedPreferences sharedPreferences;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ProfileFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    public static final String PREFS_NAME = "user_prefs";
+    public static final String KEY_NAME = "name";
+    public static final String KEY_EMAIL = "email";
+    public static final String KEY_THEME = "dark_mode";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        editName = view.findViewById(R.id.editName);
+        editEmail = view.findViewById(R.id.editEmail);
+        switchTheme = view.findViewById(R.id.switchTheme);
+        btnSave = view.findViewById(R.id.btnSave);
+
+        sharedPreferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+
+        // Load user data and theme preferences
+        loadUserData();
+
+        // Handle theme switch toggle
+        // Toggle the theme based on the switch's state
+        switchTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // Save the theme preference
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean(KEY_THEME, isChecked);
+            editor.apply();
+
+            // Apply the selected theme globally
+            if (isChecked) {
+                // Dark mode
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            } else {
+                // Light mode
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+
+            // Recreate the activity to apply the theme change
+            getActivity().recreate();
+        });
+
+
+        // Handle saving user data
+        btnSave.setOnClickListener(v -> {
+            String name = editName.getText().toString().trim();
+            String email = editEmail.getText().toString().trim();
+
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(KEY_NAME, name);
+            editor.putString(KEY_EMAIL, email);
+            editor.apply();
+
+            Toast.makeText(getContext(), "Profile saved", Toast.LENGTH_SHORT).show();
+        });
+
+        return view;
+    }
+
+    private void loadUserData() {
+        String name = sharedPreferences.getString(KEY_NAME, "");
+        String email = sharedPreferences.getString(KEY_EMAIL, "");
+        boolean isDarkMode = sharedPreferences.getBoolean(KEY_THEME, false);
+
+        editName.setText(name);
+        editEmail.setText(email);
+        switchTheme.setChecked(isDarkMode);
     }
 }

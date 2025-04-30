@@ -1,0 +1,15 @@
+<resources>
+        <!-- Base theme for light mode -->
+        <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+            <!-- Light theme background and text color -->
+            <item name="android:colorBackground">@color/white</item> <!-- White background for light mode -->
+            <item name="android:textColorPrimary">@color/black</item> <!-- Black text for light mode -->
+        </style>
+
+        <!-- Dark mode theme -->
+        <style name="AppTheme.Dark" parent="Theme.AppCompat.DayNight.NoActionBar">
+            <!-- Dark theme background and text color -->
+            <item name="android:colorBackground">@color/black</item> <!-- Dark background for dark mode -->
+            <item name="android:textColorPrimary">@color/white</item> <!-- White text for dark mode -->
+        </style>
+</resources>

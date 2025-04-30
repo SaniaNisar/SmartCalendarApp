@@ -1,64 +1,63 @@
 package com.app.smartcalendarapp;
 
+import android.database.Cursor;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.Toast;
+import androidx.fragment.app.Fragment;
+import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link NotificationFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class NotificationFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public NotificationFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment NotificationFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static NotificationFragment newInstance(String param1, String param2) {
-        NotificationFragment fragment = new NotificationFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    ListView listViewNotifications;
+    TaskDatabaseHelper dbHelper;
+    ArrayList<Notification> notificationList;
+    NotificationAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notification, container, false);
+        View view = inflater.inflate(R.layout.fragment_notification, container, false);
+
+        listViewNotifications = view.findViewById(R.id.listViewNotifications);
+        dbHelper = new TaskDatabaseHelper(getContext());
+        notificationList = new ArrayList<>();
+
+        addDummyNotificationsIfNeeded();
+        loadNotifications();
+
+        return view;
+    }
+
+    private void addDummyNotificationsIfNeeded() {
+        if (dbHelper.getAllNotifications().getCount() == 0) {
+            dbHelper.addNotification("Meeting with Dr. Smith at 5 PM", "2025-05-01 09:00");
+            dbHelper.addNotification("Don't forget your blood test", "2025-04-30 14:00");
+            dbHelper.addNotification("Report is ready for pickup", "2025-04-29 10:00");
+        }
+    }
+
+    private void loadNotifications() {
+        notificationList.clear();
+        Cursor cursor = dbHelper.getAllNotifications();
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow(TaskDatabaseHelper.COLUMN_NOTIFICATION_ID));
+                String message = cursor.getString(cursor.getColumnIndexOrThrow(TaskDatabaseHelper.COLUMN_MESSAGE));
+                String dateTime = cursor.getString(cursor.getColumnIndexOrThrow(TaskDatabaseHelper.COLUMN_NOTIFICATION_DATETIME));
+
+                notificationList.add(new Notification(id, message, dateTime));
+            } while (cursor.moveToNext());
+
+            cursor.close();
+            adapter = new NotificationAdapter(getContext(), notificationList);
+            listViewNotifications.setAdapter(adapter);
+        } else {
+            Toast.makeText(getContext(), "No notifications found", Toast.LENGTH_SHORT).show();
+        }
     }
 }
