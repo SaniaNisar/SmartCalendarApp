@@ -2,8 +2,10 @@ package com.app.smartcalendarapp;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,6 +25,8 @@ public class AddTaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Window window = getWindow();
+        window.setStatusBarColor(Color.TRANSPARENT); // Make status bar transparent
         setContentView(R.layout.activity_add_task);
 
         editTitle = findViewById(R.id.edit_title);
